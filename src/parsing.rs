@@ -1,24 +1,18 @@
 use anyhow::{Context, Result};
-use xmlparser::Token;
 
-use self::translation_part_parser::{translation_parts, Translated};
+
+
 
 pub mod translation_part_parser {
     use itertools::Itertools;
     use nom::{
-        branch::alt,
-        bytes::complete::{tag, take_while, take_while1},
-        combinator::opt,
-        error::{context, VerboseError},
-        multi::separated_list1,
-        sequence::{delimited, preceded, tuple},
-        AsChar, IResult,
+        error::{VerboseError}, IResult,
     };
     use regex::Regex;
 
     use super::*;
 
-    use derive_more::From;
+    
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash)]
     pub struct Translated {
@@ -75,7 +69,7 @@ pub mod translation_part_parser {
 
 #[cfg(test)]
 mod tests {
-    use super::translation_part_parser::{translation_parts, Translated};
+    use super::translation_part_parser::{translation_parts};
     use anyhow::Context;
 
     const CONTENT: &str = r#"

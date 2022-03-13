@@ -3,7 +3,7 @@ use anyhow::{bail, Context, Result};
 use deepl_api::{DeepL, TranslatableTextList};
 use itertools::Itertools;
 use quick_error::ResultExt;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 
 lazy_static::lazy_static! {
     pub static ref DEEPL: Option<DeepL> = {
