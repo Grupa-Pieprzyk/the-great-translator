@@ -125,7 +125,8 @@ fn main() -> Result<()> {
                                 == translation_file_path.canonicalize()? =>
                         {
                             // throw an error because we need a source for the rest of translations
-                            bail!("{unhandled:?} is not handled in translation source file {source:?}, it needs to be updated first");
+                            log::error!("{unhandled:?} is not handled in translation source file {source:?}, it needs to be updated first");
+                            format!("{}.{}", UNHANDLED_MARKER, unhandled.join("."))
                         }
                         Some(source) => {
                             let source_json = from_json_file(source.clone()).context("loading source file for translation")?;
