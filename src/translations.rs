@@ -19,7 +19,7 @@ pub fn translate(text: &str, from: String, to: String) -> Result<String> {
     if text.contains(UNHANDLED_MARKER) {
         bail!("'{text}' contains '{UNHANDLED_MARKER}'");
     }
-
+    log::info!("translating [{text}]: [{from}] -> [{to}]");
     let texts = TranslatableTextList {
         source_language: Some(from),
         target_language: to,

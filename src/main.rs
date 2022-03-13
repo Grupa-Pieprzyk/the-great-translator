@@ -45,11 +45,19 @@ fn main() -> Result<()> {
     }
     pretty_env_logger::try_init().ok();
     // end of logging
+    let from_json_file = |source: PathBuf| -> anyhow::Result<JsonTranslationFile> {std::fs::read_to_string(&source)
+        .context("reading translation file")
+        .and_then(|content| {
+            serde_json::from_str(&content).context("parsing translation file")
+        })};
 
     let args = Args::parse();
     if let Some(value) = args.deepl_api_key{
         std::env::set_var("DEEPL_API_KEY", value);
     }
+
+    let source_file_keys = args.source_for_translations.iter().map(|f| from_json_file(f.clone()).context("reading keys from translation source file")).collect::<Result<Vec<_>, _>>()?.into_iter().flat_map(|f| f.keys()).collect_vec();
+
     let translation_markers = glob::glob(&args.files_glob)
         .context("bad glob pattern")?
         .into_iter()
@@ -69,6 +77,7 @@ fn main() -> Result<()> {
         .flatten()
         .unique()
         .map(|t| t.segments)
+        .chain(source_file_keys)
         .collect::<HashSet<_>>();
 
     let mut valid = true;
@@ -79,11 +88,7 @@ fn main() -> Result<()> {
         .collect::<Result<Vec<_>, _>>()
         .context("reading translation dir file")?;
 
-    let from_json_file = |source| -> anyhow::Result<JsonTranslationFile> {std::fs::read_to_string(&source)
-    .context("reading translation file")
-    .and_then(|content| {
-        serde_json::from_str(&content).context("parsing translation file")
-    })};
+
     for translation_file_path in args.source_for_translations.iter().cloned().chain(
         all_translation_paths
             .into_iter()
