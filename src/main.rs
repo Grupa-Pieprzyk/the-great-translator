@@ -8,7 +8,7 @@ use anyhow::{bail, Context, Result};
 use clap::Parser;
 use itertools::Itertools;
 use json_translation_file::JsonTranslationFile;
-use translations::{translate, lang_from_filename};
+use translations::{lang_from_filename, translate};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -45,18 +45,25 @@ fn main() -> Result<()> {
     }
     pretty_env_logger::try_init().ok();
     // end of logging
-    let from_json_file = |source: PathBuf| -> anyhow::Result<JsonTranslationFile> {std::fs::read_to_string(&source)
-        .context("reading translation file")
-        .and_then(|content| {
-            serde_json::from_str(&content).context("parsing translation file")
-        })};
+    let from_json_file = |source: PathBuf| -> anyhow::Result<JsonTranslationFile> {
+        std::fs::read_to_string(&source)
+            .context("reading translation file")
+            .and_then(|content| serde_json::from_str(&content).context("parsing translation file"))
+    };
 
     let args = Args::parse();
-    if let Some(value) = args.deepl_api_key{
+    if let Some(value) = args.deepl_api_key {
         std::env::set_var("DEEPL_API_KEY", value);
     }
 
-    let source_file_keys = args.source_for_translations.iter().map(|f| from_json_file(f.clone()).context("reading keys from translation source file")).collect::<Result<Vec<_>, _>>()?.into_iter().flat_map(|f| f.keys()).collect_vec();
+    let source_file_keys = args
+        .source_for_translations
+        .iter()
+        .map(|f| from_json_file(f.clone()).context("reading keys from translation source file"))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .flat_map(|f| f.keys())
+        .collect_vec();
 
     let translation_markers = glob::glob(&args.files_glob)
         .context("bad glob pattern")?
@@ -87,7 +94,6 @@ fn main() -> Result<()> {
         .into_iter()
         .collect::<Result<Vec<_>, _>>()
         .context("reading translation dir file")?;
-
 
     for translation_file_path in args.source_for_translations.iter().cloned().chain(
         all_translation_paths
@@ -125,7 +131,6 @@ fn main() -> Result<()> {
                             let source_json = from_json_file(source.clone()).context("loading source file for translation")?;
                             let source_value = source_json.get(unhandled).context(format!("{unhandled:?} is not specified in source {source_json:?}, but it us required in order to generate a translation"))?;
                             translate(source_value, lang_from_filename(source)?, lang_from_filename(&translation_file_path)?)?
-                            
                         }
                         None => format!("{}.{}", UNHANDLED_MARKER, unhandled.join(".")),
                     },
@@ -154,10 +159,14 @@ fn main() -> Result<()> {
     }
     if let Ok(deepl) = translations::DEEPL.as_ref().context("no api key") {
         if let Ok(usage_information) = deepl.usage_information() {
-            log::info!("deepl character limit: {} :: current character count: {} :: ({} characters left)", usage_information.character_limit, usage_information.character_count, usage_information.character_limit - usage_information.character_count);
+            log::info!(
+                "deepl character limit: {} :: current character count: {} :: ({} characters left)",
+                usage_information.character_limit,
+                usage_information.character_count,
+                usage_information.character_limit - usage_information.character_count
+            );
         }
     }
-    
 
     if !valid {
         bail!("check above errors");
