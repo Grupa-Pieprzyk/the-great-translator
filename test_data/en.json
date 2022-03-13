@@ -1,0 +1,40 @@
+{
+	"Exited": "Exited",
+	"Running": "Running",
+	"Launching": "Launching",
+	"Updating": "Updating",
+	"Error": "Error",
+	"forms": {
+		"username": "username",
+		"password": "password"
+	},
+	"navbar": {
+		"login_button": "log in"
+	},
+	"sidebar_buttons": {
+		"home_page": "home page",
+		"settings": "settings",
+		"about_us": "about us",
+		"profile": "profile",
+		"cosmetics": "cosmetics",
+		"store": "store",
+		"play_now": "play now"
+	},
+	"footer": {
+		"terms": "terms",
+		"terms_of_service_provision": "terms of service provision",
+		"privacy_policy": "privacy policy"
+	},
+	"settings": {
+		"game_settings": {
+			"title": "game settings",
+			"language": "language",
+			"screenshot": "screenshot",
+			"window_game_starts": "window game starts",
+			"memory": "memory"
+		},
+		"personal_settings": {
+			"title": "personal settings"
+		}
+	}
+}
