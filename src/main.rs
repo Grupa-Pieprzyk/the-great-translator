@@ -154,7 +154,7 @@ fn main() -> Result<()> {
     }
     if let Ok(deepl) = translations::DEEPL.as_ref().context("no api key") {
         if let Ok(usage_information) = deepl.usage_information() {
-            log::info!("deepl character limit: {}", usage_information.character_limit);
+            log::info!("deepl character limit: {} :: current character count: {}", usage_information.character_limit, usage_information.character_count);
         }
     }
     
