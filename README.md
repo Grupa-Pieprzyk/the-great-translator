@@ -48,3 +48,7 @@ OPTIONS:
     -w, --write
             update missing entries in *.json files
 ```
+## example usage
+
+![the-great-translator-example-usage](https://user-images.githubusercontent.com/22037927/158068771-380d0464-6e18-4e9d-a47d-50e0ca79b9ae.gif)
+
